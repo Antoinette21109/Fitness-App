@@ -1,0 +1,1792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ComboMaster Fitness</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0f;
+            --bg-elevated: #12121a;
+            --bg-card: #1a1a24;
+            --fg: #f0f0f5;
+            --fg-muted: #8888a0;
+            --accent: #00ff88;
+            --accent-dim: #00cc6a;
+            --accent-glow: rgba(0, 255, 136, 0.15);
+            --danger: #ff4466;
+            --warning: #ffaa00;
+            --border: #2a2a3a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--fg);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Oswald', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+        }
+
+        .nav-link {
+            position: relative;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 100%;
+        }
+
+        .nav-link.active {
+            color: var(--accent);
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: var(--bg);
+            font-weight: 600;
+            padding: 12px 28px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-family: 'Oswald', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-dim);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px var(--accent-glow);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--fg);
+            font-weight: 500;
+            padding: 12px 28px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            border: 1px solid var(--border);
+            cursor: pointer;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            transition: all 0.4s ease;
+        }
+
+        .card:hover {
+            border-color: var(--accent);
+            transform: translateY(-4px);
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-elevated) 100%);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), transparent);
+        }
+
+        .progress-bar {
+            background: var(--border);
+            border-radius: 4px;
+            height: 8px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent), var(--accent-dim));
+            border-radius: 4px;
+            transition: width 1s ease;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            background: transparent;
+            border: none;
+            color: var(--fg-muted);
+            cursor: pointer;
+            font-family: 'Oswald', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .tab-btn.active {
+            color: var(--accent);
+        }
+
+        .tab-btn::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--accent);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .tab-btn.active::after {
+            transform: scaleX(1);
+        }
+
+        .page {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .animate-slide-up {
+            animation: slideUp 0.6s ease forwards;
+        }
+
+        .animate-scale-in {
+            animation: scaleIn 0.5s ease forwards;
+        }
+
+        .stagger-1 { animation-delay: 0.1s; opacity: 0; }
+        .stagger-2 { animation-delay: 0.2s; opacity: 0; }
+        .stagger-3 { animation-delay: 0.3s; opacity: 0; }
+        .stagger-4 { animation-delay: 0.4s; opacity: 0; }
+        .stagger-5 { animation-delay: 0.5s; opacity: 0; }
+
+        .hero-gradient {
+            background: 
+                radial-gradient(ellipse at 20% 80%, var(--accent-glow) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(255, 100, 100, 0.08) 0%, transparent 50%),
+                linear-gradient(180deg, var(--bg) 0%, var(--bg-elevated) 100%);
+        }
+
+        .grid-pattern {
+            background-image: 
+                linear-gradient(var(--border) 1px, transparent 1px),
+                linear-gradient(90deg, var(--border) 1px, transparent 1px);
+            background-size: 60px 60px;
+            opacity: 0.3;
+        }
+
+        .input-field {
+            background: var(--bg-elevated);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 12px 16px;
+            color: var(--fg);
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-success {
+            background: rgba(0, 255, 136, 0.15);
+            color: var(--accent);
+        }
+
+        .badge-warning {
+            background: rgba(255, 170, 0, 0.15);
+            color: var(--warning);
+        }
+
+        .badge-danger {
+            background: rgba(255, 68, 102, 0.15);
+            color: var(--danger);
+        }
+
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            border-radius: 8px;
+            color: var(--fg-muted);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .sidebar-link:hover {
+            background: var(--bg-card);
+            color: var(--fg);
+        }
+
+        .sidebar-link.active {
+            background: var(--accent-glow);
+            color: var(--accent);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        .scrollbar-thin::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .scrollbar-thin::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+
+        .scrollbar-thin::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+
+        .product-card img {
+            transition: transform 0.5s ease;
+        }
+
+        .product-card:hover img {
+            transform: scale(1.05);
+        }
+
+        .chart-bar {
+            transition: height 0.8s ease;
+        }
+
+        .floating-shape {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.5;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav id="mainNav" class="fixed top-0 left-0 right-0 z-50 bg-opacity-90 backdrop-blur-lg border-b border-[var(--border)]" style="background: rgba(10, 10, 15, 0.9);">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-2 cursor-pointer" onclick="navigateTo('home')">
+                    <svg class="w-8 h-8 text-[var(--accent)]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M6.5 6.5L17.5 17.5M6.5 17.5L17.5 6.5M12 2v4M12 18v4M2 12h4M18 12h4"/>
+                    </svg>
+                    <span class="font-bold text-xl tracking-tight" style="font-family: 'Oswald', sans-serif;">COMBOMASTER</span>
+                </div>
+                
+                <div class="hidden md:flex items-center gap-8">
+                    <button class="nav-link text-sm font-medium active" data-page="home" onclick="navigateTo('home')">Home</button>
+                    <button class="nav-link text-sm font-medium active" data-page="About" onclick="navigateTo('About')">About</button>
+                    <button class="nav-link text-sm font-medium" data-page="portal" onclick="navigateTo('portal')">Member Portal</button>
+                    <button class="nav-link text-sm font-medium" data-page="shop" onclick="navigateTo('shop')">Shop</button>
+                    <button class="nav-link text-sm font-medium" data-page="transformations" onclick="navigateTo('transformations')">Transformations</button>
+                    <button class="nav-link text-sm font-medium" data-page="blog" onclick="navigateTo('blog')">Blog</button>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <button onclick="navigateTo('admin')" class="btn-secondary text-sm hidden sm:block">Admin</button>
+                    <button class="btn-primary text-sm">Join Now</button>
+                    <button class="md:hidden" onclick="toggleMobileMenu()">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="hidden md:hidden bg-[var(--bg-elevated)] border-t border-[var(--border)]">
+            <div class="px-4 py-4 space-y-2">
+                <button class="block w-full text-left py-2 px-4 rounded hover:bg-[var(--bg-card)]" onclick="navigateTo('home'); toggleMobileMenu();">Home</button>
+                <button class="block w-full text-left py-2 px-4 rounded hover:bg-[var(--bg-card)]" onclick="navigateTo('About'); toggleMobileMenu();">About</button>
+                <button class="block w-full text-left py-2 px-4 rounded hover:bg-[var(--bg-card)]" onclick="navigateTo('portal'); toggleMobileMenu();">Member Portal</button>
+                <button class="block w-full text-left py-2 px-4 rounded hover:bg-[var(--bg-card)]" onclick="navigateTo('shop'); toggleMobileMenu();">Shop</button>
+                <button class="block w-full text-left py-2 px-4 rounded hover:bg-[var(--bg-card)]" onclick="navigateTo('transformations'); toggleMobileMenu();">Transformations</button>
+                <button class="block w-full text-left py-2 px-4 rounded hover:bg-[var(--bg-card)]" onclick="navigateTo('blog'); toggleMobileMenu();">Blog</button>
+                <button class="block w-full text-left py-2 px-4 rounded hover:bg-[var(--bg-card)]" onclick="navigateTo('admin'); toggleMobileMenu();">Admin</button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="pt-16">
+        <!-- HOME PAGE -->
+        <div id="page-home" class="page active">
+            <!-- Hero Section -->
+            <section class="hero-gradient min-h-[90vh] relative overflow-hidden">
+                <div class="grid-pattern absolute inset-0"></div>
+                <div class="floating-shape w-96 h-96 bg-[var(--accent)] top-20 -left-48"></div>
+                <div class="floating-shape w-64 h-64 bg-red-500 bottom-20 right-20" style="animation-delay: -4s;"></div>
+                
+                <div class="relative max-w-7xl mx-auto px-4 sm:px-6 pt-20 pb-16">
+                    <div class="grid lg:grid-cols-2 gap-12 items-center min-h-[70vh]">
+                        <div>
+                            <h1 class="text-5xl sm:text-6xl lg:text-7xl font-bold leading-none mb-6 animate-slide-up stagger-1">
+                                SLOGAN:TRANSFORM YOUR<span class="text-[var(--accent)]">BODY</span>, MASTER YOUR LIFE
+                            </h1>  
+                             <p class="text-lg text-[var(--fg-muted)] mb-8 max-w-lg animate-slide-up stagger-2">
+                                ~FCTFX
+                            </p> 
+                            <h1 class="text-5xl sm:text-6xl lg:text-7xl font-bold leading-none mb-6 animate-slide-up stagger-1">
+                                WELCOME TO COMBOMASTER <span class="text-[var(--accent)]">FITNESS</span>
+                            </h1>
+                            <p class="text-lg text-[var(--fg-muted)] mb-8 max-w-lg animate-slide-up stagger-2">
+                                Introduction
+                              Welcome to ComboMaster Fitness, where fitness meets discipline, transformation, and healthy living.
+
+                              We are committed to helping individuals achieve their personal fitness goals through professional workout programs, meal plans, body transformation guidance, and lifestyle coaching. Whether your goal is weight loss, muscle building, strength development, or competition preparation, Combo Master Fitness provides practical solutions designed for real results.
+                            </p>
+                             <p class="text-lg text-[var(--fg-muted)] mb-8 max-w-lg animate-slide-up stagger-2">
+                                Our mission is to inspire confidence, improve health, and build stronger bodies through structured training, nutrition support, and continuous motivation.
+                            </p>
+                            <div class="flex flex-wrap gap-4 animate-slide-up stagger-3">
+                                <button class="btn-primary">Start Your Journey</button>
+                                <button class="btn-secondary">View Programs</button>
+                            </div>
+                            <div class="flex items-center gap-8 mt-12 animate-slide-up stagger-4">
+                                <div>
+                                    <div class="text-3xl font-bold text-[var(--accent)]">50K+</div>
+                                    <div class="text-sm text-[var(--fg-muted)]">Active Members</div>
+                                </div>
+                                <div class="w-px h-12 bg-[var(--border)]"></div>
+                                <div>
+                                    <div class="text-3xl font-bold">200+</div>
+                                    <div class="text-sm text-[var(--fg-muted)]">Expert Programs</div>
+                                </div>
+                                <div class="w-px h-12 bg-[var(--border)]"></div>
+                                <div>
+                                    <div class="text-3xl font-bold">98%</div>
+                                    <div class="text-sm text-[var(--fg-muted)]">Success Rate</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="relative animate-slide-up stagger-5">
+                            <div class="aspect-square max-w-md mx-auto relative">
+                                <div class="absolute inset-0 bg-gradient-to-br from-[var(--accent)] to-transparent opacity-20 rounded-full blur-3xl"></div>
+                                <div class="relative bg-[var(--bg-card)] rounded-2xl border border-[var(--border)] p-6 transform rotate-3 hover:rotate-0 transition-transform duration-500">
+                                    <div class="flex items-center gap-3 mb-4">
+                                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-[var(--accent)] to-[var(--accent-dim)] flex items-center justify-center">
+                                            <svg class="w-6 h-6 text-[var(--bg)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <div class="font-semibold">Today's Workout</div>
+                                            <div class="text-sm text-[var(--fg-muted)]">Upper Body Power</div>
+                                        </div>
+                                    </div>
+                                    <div class="space-y-3">
+                                        <div class="flex justify-between text-sm">
+                                            <span>Bench Press</span>
+                                            <span class="text-[var(--accent)]">4x8</span>
+                                        </div>
+                                        <div class="flex justify-between text-sm">
+                                            <span>Shoulder Press</span>
+                                            <span class="text-[var(--accent)]">3x12</span>
+                                        </div>
+                                        <div class="flex justify-between text-sm">
+                                            <span>Lat Pulldown</span>
+                                            <span class="text-[var(--accent)]">4x10</span>
+                                        </div>
+                                    </div>
+                                    <div class="mt-4 pt-4 border-t border-[var(--border)]">
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-sm text-[var(--fg-muted)]">Progress</span>
+                                            <span class="text-sm font-semibold">3/5 Complete</span>
+                                        </div>
+                                        <div class="progress-bar mt-2">
+                                            <div class="progress-fill" style="width: 60%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+    <main class="pt-16">
+        <!-- ABOUT -->
+        <div id="page-about" class="page active">
+            <!-- Hero Section -->
+            <section class="hero-gradient min-h-[90vh] relative overflow-hidden">
+                <div class="grid-pattern absolute inset-0"></div>
+                <div class="floating-shape w-96 h-96 bg-[var(--accent)] top-20 -left-48"></div>
+                <div class="floating-shape w-64 h-64 bg-red-500 bottom-20 right-20" style="animation-delay: -4s;"></div>
+                
+                <div class="relative max-w-7xl mx-auto px-4 sm:px-6 pt-20 pb-16">
+                    <div class="grid lg:grid-cols-2 gap-12 items-center min-h-[70vh]">
+                        <div>
+                            <h1 class="text-5xl sm:text-6xl lg:text-7xl font-bold leading-none mb-6 animate-slide-up stagger-1">
+                                ABOUT COMBOMASTER<span class="text-[var(--accent)]">FITNESS</span>, THE HISTORY OF COMBOMASTER FITNESS
+                            </h1>  
+                             <p class="text-lg text-[var(--fg-muted)] mb-8 max-w-lg animate-slide-up stagger-2">
+                                ~FCTFX
+                                ComboMaster Fitness was born from my personal journey of transformation and my passion for helping others achieve their fitness goals. When I started training, I realized that true results do not come from training alone, they come from a combination of the right workouts, proper nutrition, mental discipline, recovery, and consistent lifestyle habits. That is where the name ComboMaster comes from.
+
+
+
+“                                Combo” represents the integration of all the key elements of fitness:
+
+                                 training, nutrition, mindset, supplementation, and discipline.
+
+                                 “Master” represents the pursuit of excellence and the responsibility to guide others with knowledge, professionalism, and results.
+
+                                 I started ComboMaster Fitness at a time when many people were struggling to find structured guidance. Some wanted to gain weight, others wanted to lose fat, some wanted to compete, and many simply wanted to live healthier lives. I saw a gap, people needed a system, not just workouts. They needed coaching, accountability, and education.
+
+                                 What began as helping a few individuals in the gym grew into a full coaching platform. I started designing personalized meal plans, workout programs for gym and home training, and transformation programs. As results began to show, more people trusted the ComboMaster system.
+
+                                 My academic journey studying fitness, psychology, nutrition, and safety helped me build ComboMaster Fitness on a professional foundation. It is not based on guesswork; it is based on science, experience, and proven results.
+
+                                 Today, ComboMaster Fitness represents more than a brand. It represents:
+
+                                 • Transformation of bodies and minds
+
+                                 • Discipline and structured living
+
+                                 • Professional coaching and education
+
+                                 • A pathway for athletes and individuals to achieve their dreams
+
+                                 It is also aligned with my broader mission through the World Fitness Federation Zambia to develop athletes, promote health, and create opportunities in fitness as a career.
+
+
+
+                                 ComboMaster Fitness is not just a name.
+
+                                 It is a system.
+
+                                 It is a philosophy.
+
+                                 It is a movement that proves when you combine knowledge, discipline, and purpose - transformation is inevitable.
+                            </p> 
+                            <h1 class="text-5xl sm:text-6xl lg:text-7xl font-bold leading-none mb-6 animate-slide-up stagger-1">
+                                FOUNDER PROFILE<span class="text-[var(--accent)]">COACH</span>, 
+                            </h1>
+                            <p class="text-lg text-[var(--fg-muted)] mb-8 max-w-lg animate-slide-up stagger-2">
+                             Mr Peter Chanda is the founder of ComboMaster Fitness
+                            </p>
+                             <img src=""
+                            <div class="flex flex-wrap gap-4 animate-slide-up stagger-3">
+                                <button class="btn-primary">Start Your Journey</button>
+                                <button class="btn-secondary">View Programs</button>
+                            </div>
+                            <div class="flex items-center gap-8 mt-12 animate-slide-up stagger-4">
+                                <div>
+                                    <div class="text-3xl font-bold text-[var(--accent)]">50K+</div>
+                                    <div class="text-sm text-[var(--fg-muted)]">Active Members</div>
+                                </div>
+                                <div class="w-px h-12 bg-[var(--border)]"></div>
+                                <div>
+                                    <div class="text-3xl font-bold">200+</div>
+                                    <div class="text-sm text-[var(--fg-muted)]">Expert Programs</div>
+                                </div>
+                                <div class="w-px h-12 bg-[var(--border)]"></div>
+                                <div>
+                                    <div class="text-3xl font-bold">98%</div>
+                                    <div class="text-sm text-[var(--fg-muted)]">Success Rate</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="relative animate-slide-up stagger-5">
+                            <div class="aspect-square max-w-md mx-auto relative">
+                                <div class="absolute inset-0 bg-gradient-to-br from-[var(--accent)] to-transparent opacity-20 rounded-full blur-3xl"></div>
+                                <div class="relative bg-[var(--bg-card)] rounded-2xl border border-[var(--border)] p-6 transform rotate-3 hover:rotate-0 transition-transform duration-500">
+                                    <div class="flex items-center gap-3 mb-4">
+                                        <div class="w-12 h-12 rounded-full bg-gradient-to-br from-[var(--accent)] to-[var(--accent-dim)] flex items-center justify-center">
+                                            <svg class="w-6 h-6 text-[var(--bg)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <div class="font-semibold">Today's Workout</div>
+                                            <div class="text-sm text-[var(--fg-muted)]">Upper Body Power</div>
+                                        </div>
+                                    </div>
+                                    <div class="space-y-3">
+                                        <div class="flex justify-between text-sm">
+                                            <span>Bench Press</span>
+                                            <span class="text-[var(--accent)]">4x8</span>
+                                        </div>
+                                        <div class="flex justify-between text-sm">
+                                            <span>Shoulder Press</span>
+                                            <span class="text-[var(--accent)]">3x12</span>
+                                        </div>
+                                        <div class="flex justify-between text-sm">
+                                            <span>Lat Pulldown</span>
+                                            <span class="text-[var(--accent)]">4x10</span>
+                                        </div>
+                                    </div>
+                                    <div class="mt-4 pt-4 border-t border-[var(--border)]">
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-sm text-[var(--fg-muted)]">Progress</span>
+                                            <span class="text-sm font-semibold">3/5 Complete</span>
+                                        </div>
+                                        <div class="progress-bar mt-2">
+                                            <div class="progress-fill" style="width: 60%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Services Section -->
+            <section class="py-20 bg-[var(--bg-elevated)]">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6">
+                    <div class="text-center mb-16">
+                        <h2 class="text-4xl font-bold mb-4">OUR SERVICES</h2>
+                        <p class="text-[var(--fg-muted)] max-w-2xl mx-auto">Everything you need to achieve your fitness goals, all in one platform.</p>
+                    </div>
+                    <div class="grid md:grid-cols-3 gap-6">
+                        <div class="card p-8 group cursor-pointer" onclick="navigateTo('portal')">
+                            <div class="w-14 h-14 rounded-lg bg-[var(--accent-glow)] flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                                <svg class="w-7 h-7 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-bold mb-3">Training Programs</h3>
+                            <p class="text-[var(--fg-muted)] text-sm mb-4">Personalized workout plans designed by expert coaches for every fitness level.</p>
+                            <span class="text-[var(--accent)] text-sm font-semibold">Explore Programs →</span>
+                        </div>
+                        <div class="card p-8 group cursor-pointer" onclick="navigateTo('portal')">
+                            <div class="w-14 h-14 rounded-lg bg-[var(--accent-glow)] flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                                <svg class="w-7 h-7 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h18v18H3V3zM12 8v8M8 12h8"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-bold mb-3">Nutrition Plans</h3>
+                            <p class="text-[var(--fg-muted)] text-sm mb-4">Custom meal plans tailored to your goals, preferences, and dietary needs.</p>
+                            <span class="text-[var(--accent)] text-sm font-semibold">View Plans →</span>
+                        </div>
+                        <div class="card p-8 group cursor-pointer" onclick="navigateTo('shop')">
+                            <div class="w-14 h-14 rounded-lg bg-[var(--accent-glow)] flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                                <svg class="w-7 h-7 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-bold mb-3">Fitness Shop</h3>
+                            <p class="text-[var(--fg-muted)] text-sm mb-4">Premium supplements, gym attire, and equipment for serious athletes.</p>
+                            <span class="text-[var(--accent)] text-sm font-semibold">Shop Now →</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Programs Preview -->
+            <section class="py-20">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6">
+                    <div class="flex items-end justify-between mb-12">
+                        <div>
+                            <h2 class="text-4xl font-bold mb-2">FEATURED PROGRAMS</h2>
+                            <p class="text-[var(--fg-muted)]">Start your transformation with our most popular programs</p>
+                        </div>
+                        <button class="btn-secondary hidden sm:block">View All</button>
+                    </div>
+                    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6" id="featuredPrograms"></div>
+                </div>
+            </section>
+        </div>
+
+        <!-- MEMBER PORTAL PAGE -->
+        <div id="page-portal" class="page">
+            <div class="bg-[var(--bg-elevated)] border-b border-[var(--border)]">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+                    <h1 class="text-3xl font-bold mb-2">Member Portal</h1>
+                    <p class="text-[var(--fg-muted)]">Welcome back, Alex! Your progress is on track.</p>
+                </div>
+            </div>
+            
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+                <!-- Portal Tabs -->
+                <div class="flex gap-2 border-b border-[var(--border)] mb-8 overflow-x-auto">
+                    <button class="tab-btn active" onclick="switchPortalTab('overview')">Overview</button>
+                    <button class="tab-btn" onclick="switchPortalTab('workouts')">Workouts</button>
+                    <button class="tab-btn" onclick="switchPortalTab('nutrition')">Nutrition</button>
+                    <button class="tab-btn" onclick="switchPortalTab('progress')">Progress</button>
+                    <button class="tab-btn" onclick="switchPortalTab('coach')">Coach Chat</button>
+                </div>
+
+                <!-- Overview Tab -->
+                <div id="portal-overview" class="portal-tab">
+                    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        <div class="stat-card p-6">
+                            <div class="text-[var(--fg-muted)] text-sm mb-1">Current Streak</div>
+                            <div class="text-3xl font-bold text-[var(--accent)]">14 Days</div>
+                            <div class="text-xs text-[var(--fg-muted)] mt-2">Personal Best: 21 days</div>
+                        </div>
+                        <div class="stat-card p-6">
+                            <div class="text-[var(--fg-muted)] text-sm mb-1">Workouts This Week</div>
+                            <div class="text-3xl font-bold">4/6</div>
+                            <div class="progress-bar mt-3">
+                                <div class="progress-fill" style="width: 80%;"></div>
+                            </div>
+                        </div>
+                        <div class="stat-card p-6">
+                            <div class="text-[var(--fg-muted)] text-sm mb-1">Calories Burned</div>
+                            <div class="text-3xl font-bold">2,450</div>
+                            <div class="text-xs text-[var(--fg-muted)] mt-2">This week</div>
+                        </div>
+                        <div class="stat-card p-6">
+                            <div class="text-[var(--fg-muted)] text-sm mb-1">Current Program</div>
+                            <div class="text-xl font-bold">Strength Builder</div>
+                            <div class="text-xs text-[var(--fg-muted)] mt-2">Week 6 of 12</div>
+                        </div>
+                    </div>
+
+                    <div class="grid lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-2">
+                            <div class="card p-6">
+                                <h3 class="text-lg font-bold mb-4">Weekly Activity</h3>
+                                <div class="flex items-end gap-3 h-48">
+                                    <div class="flex-1 flex flex-col items-center gap-2">
+                                        <div class="w-full bg-[var(--accent)] rounded-t chart-bar" style="height: 60%;"></div>
+                                        <span class="text-xs text-[var(--fg-muted)]">Mon</span>
+                                    </div>
+                                    <div class="flex-1 flex flex-col items-center gap-2">
+                                        <div class="w-full bg-[var(--accent)] rounded-t chart-bar" style="height: 80%;"></div>
+                                        <span class="text-xs text-[var(--fg-muted)]">Tue</span>
+                                    </div>
+                                    <div class="flex-1 flex flex-col items-center gap-2">
+                                        <div class="w-full bg-[var(--accent)] rounded-t chart-bar" style="height: 45%;"></div>
+                                        <span class="text-xs text-[var(--fg-muted)]">Wed</span>
+                                    </div>
+                                    <div class="flex-1 flex flex-col items-center gap-2">
+                                        <div class="w-full bg-[var(--accent)] rounded-t chart-bar" style="height: 90%;"></div>
+                                        <span class="text-xs text-[var(--fg-muted)]">Thu</span>
+                                    </div>
+                                    <div class="flex-1 flex flex-col items-center gap-2">
+                                        <div class="w-full bg-[var(--accent)] opacity-40 rounded-t chart-bar" style="height: 20%;"></div>
+                                        <span class="text-xs text-[var(--fg-muted)]">Fri</span>
+                                    </div>
+                                    <div class="flex-1 flex flex-col items-center gap-2">
+                                        <div class="w-full bg-[var(--border)] rounded-t chart-bar" style="height: 10%;"></div>
+                                        <span class="text-xs text-[var(--fg-muted)]">Sat</span>
+                                    </div>
+                                    <div class="flex-1 flex flex-col items-center gap-2">
+                                        <div class="w-full bg-[var(--border)] rounded-t chart-bar" style="height: 10%;"></div>
+                                        <span class="text-xs text-[var(--fg-muted)]">Sun</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card p-6">
+                            <h3 class="text-lg font-bold mb-4">Today's Meal Plan</h3>
+                            <div class="space-y-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-2 h-2 rounded-full bg-[var(--accent)]"></div>
+                                    <div class="flex-1">
+                                        <div class="text-sm font-medium">Breakfast</div>
+                                        <div class="text-xs text-[var(--fg-muted)]">Oatmeal with berries</div>
+                                    </div>
+                                    <span class="text-xs text-[var(--fg-muted)]">420 cal</span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <div class="w-2 h-2 rounded-full bg-[var(--warning)]"></div>
+                                    <div class="flex-1">
+                                        <div class="text-sm font-medium">Lunch</div>
+                                        <div class="text-xs text-[var(--fg-muted)]">Grilled chicken salad</div>
+                                    </div>
+                                    <span class="text-xs text-[var(--fg-muted)]">580 cal</span>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <div class="w-2 h-2 rounded-full bg-[var(--danger)]"></div>
+                                    <div class="flex-1">
+                                        <div class="text-sm font-medium">Dinner</div>
+                                        <div class="text-xs text-[var(--fg-muted)]">Salmon with quinoa</div>
+                                    </div>
+                                    <span class="text-xs text-[var(--fg-muted)]">620 cal</span>
+                                </div>
+                            </div>
+                            <button class="btn-secondary w-full mt-4 text-sm">View Full Plan</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Workouts Tab -->
+                <div id="portal-workouts" class="portal-tab hidden">
+                    <div class="grid lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-2">
+                            <h3 class="text-xl font-bold mb-4">Current Program: Strength Builder</h3>
+                            <div class="space-y-4" id="workoutList"></div>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold mb-4">Your Programs</h3>
+                            <div class="space-y-3">
+                                <div class="card p-4 border-[var(--accent)]">
+                                    <div class="font-semibold">Strength Builder</div>
+                                    <div class="text-xs text-[var(--fg-muted)]">12 weeks • Active</div>
+                                </div>
+                                <div class="card p-4">
+                                    <div class="font-semibold">HIIT Cardio Blast</div>
+                                    <div class="text-xs text-[var(--fg-muted)]">8 weeks • Completed</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Nutrition Tab -->
+                <div id="portal-nutrition" class="portal-tab hidden">
+                    <div class="grid lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-2">
+                            <div class="card p-6">
+                                <h3 class="text-xl font-bold mb-4">Today's Nutrition</h3>
+                                <div class="grid grid-cols-4 gap-4 mb-6">
+                                    <div class="text-center">
+                                        <div class="text-2xl font-bold">1,620</div>
+                                        <div class="text-xs text-[var(--fg-muted)]">Calories</div>
+                                        <div class="progress-bar mt-2">
+                                            <div class="progress-fill" style="width: 72%;"></div>
+                                        </div>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="text-2xl font-bold">142g</div>
+                                        <div class="text-xs text-[var(--fg-muted)]">Protein</div>
+                                        <div class="progress-bar mt-2">
+                                            <div class="progress-fill" style="width: 85%;"></div>
+                                        </div>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="text-2xl font-bold">165g</div>
+                                        <div class="text-xs text-[var(--fg-muted)]">Carbs</div>
+                                        <div class="progress-bar mt-2">
+                                            <div class="progress-fill" style="width: 65%;"></div>
+                                        </div>
+                                    </div>
+                                    <div class="text-center">
+                                        <div class="text-2xl font-bold">48g</div>
+                                        <div class="text-xs text-[var(--fg-muted)]">Fats</div>
+                                        <div class="progress-bar mt-2">
+                                            <div class="progress-fill" style="width: 70%;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="space-y-3" id="mealList"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold mb-4">Meal Plans</h3>
+                            <div class="space-y-3">
+                                <div class="card p-4 border-[var(--accent)]">
+                                    <div class="font-semibold">Muscle Building</div>
+                                    <div class="text-xs text-[var(--fg-muted)]">High protein • Active</div>
+                                </div>
+                                <div class="card p-4">
+                                    <div class="font-semibold">Fat Loss</div>
+                                    <div class="text-xs text-[var(--fg-muted)]">Calorie deficit</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Progress Tab -->
+                <div id="portal-progress" class="portal-tab hidden">
+                    <div class="grid lg:grid-cols-2 gap-6">
+                        <div class="card p-6">
+                            <h3 class="text-xl font-bold mb-4">Body Measurements</h3>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="p-4 bg-[var(--bg-elevated)] rounded-lg">
+                                    <div class="text-sm text-[var(--fg-muted)]">Weight</div>
+                                    <div class="text-2xl font-bold">178 lbs</div>
+                                    <div class="text-xs text-[var(--accent)]">-5 lbs from start</div>
+                                </div>
+                                <div class="p-4 bg-[var(--bg-elevated)] rounded-lg">
+                                    <div class="text-sm text-[var(--fg-muted)]">Body Fat</div>
+                                    <div class="text-2xl font-bold">14.2%</div>
+                                    <div class="text-xs text-[var(--accent)]">-2.3% from start</div>
+                                </div>
+                                <div class="p-4 bg-[var(--bg-elevated)] rounded-lg">
+                                    <div class="text-sm text-[var(--fg-muted)]">Chest</div>
+                                    <div class="text-2xl font-bold">42"</div>
+                                    <div class="text-xs text-[var(--accent)]">+1.5" from start</div>
+                                </div>
+                                <div class="p-4 bg-[var(--bg-elevated)] rounded-lg">
+                                    <div class="text-sm text-[var(--fg-muted)]">Waist</div>
+                                    <div class="text-2xl font-bold">32"</div>
+                                    <div class="text-xs text-[var(--accent)]">-2" from start</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card p-6">
+                            <h3 class="text-xl font-bold mb-4">Strength Progress</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <div class="flex justify-between text-sm mb-2">
+                                        <span>Bench Press</span>
+                                        <span class="text-[var(--accent)]">+25 lbs</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 75%;"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-sm mb-2">
+                                        <span>Squat</span>
+                                        <span class="text-[var(--accent)]">+40 lbs</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 85%;"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-sm mb-2">
+                                        <span>Deadlift</span>
+                                        <span class="text-[var(--accent)]">+35 lbs</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 80%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Coach Chat Tab -->
+                <div id="portal-coach" class="portal-tab hidden">
+                    <div class="grid lg:grid-cols-3 gap-6">
+                        <div class="lg:col-span-2">
+                            <div class="card p-6 h-96 flex flex-col">
+                                <div class="flex items-center gap-3 pb-4 border-b border-[var(--border)]">
+                                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-[var(--accent)] to-[var(--accent-dim)] flex items-center justify-center text-[var(--bg)] font-bold">M</div>
+                                    <div>
+                                        <div class="font-semibold">Coach Peter Chanda</div>
+                                        <div class="text-xs text-[var(--accent)]">Online</div>
+                                    </div>
+                                </div>
+                                <div class="flex-1 overflow-y-auto py-4 space-y-4 scrollbar-thin">
+                                    <div class="flex gap-3">
+                                        <div class="w-8 h-8 rounded-full bg-[var(--accent)] flex-shrink-0 flex items-center justify-center text-[var(--bg)] text-xs font-bold">M</div>
+                                        <div class="bg-[var(--bg-elevated)] rounded-lg p-3 max-w-xs">
+                                            <p class="text-sm">Great progress on your bench press! Let's increase the weight by 5 lbs next session.</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex gap-3 justify-end">
+                                        <div class="bg-[var(--accent)] text-[var(--bg)] rounded-lg p-3 max-w-xs">
+                                            <p class="text-sm">Thanks! I felt stronger today. Should I still do the deload week?</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex gap-3">
+                                        <div class="w-8 h-8 rounded-full bg-[var(--accent)] flex-shrink-0 flex items-center justify-center text-[var(--bg)] text-xs font-bold">M</div>
+                                        <div class="bg-[var(--bg-elevated)] rounded-lg p-3 max-w-xs">
+                                            <p class="text-sm">Yes, stick to the plan. Recovery is just as important as training!</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex gap-3 pt-4 border-t border-[var(--border)]">
+                                    <input type="text" class="input-field flex-1" placeholder="Type your message...">
+                                    <button class="btn-primary">Send</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold mb-4">Your Coach</h3>
+                            <div class="card p-4">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <div class="w-16 h-16 rounded-full bg-gradient-to-br from-[var(--accent)] to-[var(--accent-dim)] flex items-center justify-center text-[var(--bg)] text-xl font-bold">M</div>
+                                    <div>
+                                        <div class="font-bold">Coach Peter Chanda</div>
+                                        <div class="text-sm text-[var(--fg-muted)]">Strength & Conditioning</div>
+                                    </div>
+                                </div>
+                                <div class="text-sm text-[var(--fg-muted)] mb-4">10+ years experience. Specialized in strength training and body recomposition.</div>
+                                <button class="btn-secondary w-full text-sm">Schedule Call</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SHOP PAGE -->
+        <div id="page-shop" class="page">
+            <div class="bg-[var(--bg-elevated)] border-b border-[var(--border)]">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+                    <h1 class="text-3xl font-bold mb-2">Fitness Shop</h1>
+                    <p class="text-[var(--fg-muted)]">Premium supplements, apparel, and equipment</p>
+                </div>
+            </div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+                <!-- Shop Categories -->
+                <div class="flex gap-4 mb-8 overflow-x-auto pb-2">
+                    <button class="shop-cat-btn px-6 py-2 rounded-full bg-[var(--accent)] text-[var(--bg)] font-semibold text-sm whitespace-nowrap" data-category="all">All Products</button>
+                    <button class="shop-cat-btn px-6 py-2 rounded-full bg-[var(--bg-card)] border border-[var(--border)] text-sm whitespace-nowrap" data-category="supplements">Supplements</button>
+                    <button class="shop-cat-btn px-6 py-2 rounded-full bg-[var(--bg-card)] border border-[var(--border)] text-sm whitespace-nowrap" data-category="apparel">Apparel</button>
+                    <button class="shop-cat-btn px-6 py-2 rounded-full bg-[var(--bg-card)] border border-[var(--border)] text-sm whitespace-nowrap" data-category="equipment">Equipment</button>
+                </div>
+
+                <!-- Products Grid -->
+                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6" id="productsGrid"></div>
+            </div>
+        </div>
+
+        <!-- TRANSFORMATIONS PAGE -->
+        <div id="page-transformations" class="page">
+            <div class="bg-[var(--bg-elevated)] border-b border-[var(--border)]">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+                    <h1 class="text-3xl font-bold mb-2">Transformations</h1>
+                    <p class="text-[var(--fg-muted)]">Real results from real members</p>
+                </div>
+            </div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+                <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6" id="transformationsGrid"></div>
+            </div>
+        </div>
+
+        <!-- BLOG PAGE -->
+        <div id="page-blog" class="page">
+            <div class="bg-[var(--bg-elevated)] border-b border-[var(--border)]">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+                    <h1 class="text-3xl font-bold mb-2">Fitness Blog</h1>
+                    <p class="text-[var(--fg-muted)]">Tips, guides, and education from our experts</p>
+                </div>
+            </div>
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 py-8">
+                <div class="grid lg:grid-cols-3 gap-6" id="blogGrid"></div>
+            </div>
+        </div>
+
+        <!-- ADMIN PAGE -->
+        <div id="page-admin" class="page">
+            <div class="flex">
+                <!-- Admin Sidebar -->
+                <aside class="w-64 bg-[var(--bg-elevated)] border-r border-[var(--border)] min-h-screen fixed left-0 top-16 hidden lg:block">
+                    <div class="p-4">
+                        <div class="text-xs uppercase tracking-wider text-[var(--fg-muted)] mb-4">Administration</div>
+                        <nav class="space-y-1">
+                            <div class="sidebar-link active" onclick="switchAdminSection('dashboard')">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+                                </svg>
+                                Dashboard
+                            </div>
+                            <div class="sidebar-link" onclick="switchAdminSection('users')">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                                </svg>
+                                User Management
+                            </div>
+                            <div class="sidebar-link" onclick="switchAdminSection('content')">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
+                                Content Management
+                            </div>
+                            <div class="sidebar-link" onclick="switchAdminSection('products')">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                                </svg>
+                                Product Management
+                            </div>
+                            <div class="sidebar-link" onclick="switchAdminSection('orders')">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                                </svg>
+                                Order Management
+                            </div>
+                            <div class="sidebar-link" onclick="switchAdminSection('marketing')">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/>
+                                </svg>
+                                Marketing Tools
+                            </div>
+                        </nav>
+                    </div>
+                </aside>
+
+                <!-- Admin Content -->
+                <div class="lg:ml-64 flex-1 p-6">
+                    <!-- Dashboard Section -->
+                    <div id="admin-dashboard" class="admin-section">
+                        <h2 class="text-2xl font-bold mb-6">Dashboard Overview</h2>
+                        <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                            <div class="stat-card p-6">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-[var(--fg-muted)] text-sm">Total Revenue</span>
+                                    <span class="badge badge-success">+12.5%</span>
+                                </div>
+                                <div class="text-3xl font-bold">$128,450</div>
+                                <div class="text-xs text-[var(--fg-muted)] mt-1">This month</div>
+                            </div>
+                            <div class="stat-card p-6">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-[var(--fg-muted)] text-sm">Active Members</span>
+                                    <span class="badge badge-success">+8.2%</span>
+                                </div>
+                                <div class="text-3xl font-bold">12,847</div>
+                                <div class="text-xs text-[var(--fg-muted)] mt-1">+423 this week</div>
+                            </div>
+                            <div class="stat-card p-6">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-[var(--fg-muted)] text-sm">Orders</span>
+                                    <span class="badge badge-warning">+3.1%</span>
+                                </div>
+                                <div class="text-3xl font-bold">1,892</div>
+                                <div class="text-xs text-[var(--fg-muted)] mt-1">This month</div>
+                            </div>
+                            <div class="stat-card p-6">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-[var(--fg-muted)] text-sm">Conversion</span>
+                                    <span class="badge badge-success">+2.4%</span>
+                                </div>
+                                <div class="text-3xl font-bold">4.8%</div>
+                                <div class="text-xs text-[var(--fg-muted)] mt-1">Visitors to members</div>
+                            </div>
+                        </div>
+
+                        <div class="grid lg:grid-cols-2 gap-6">
+                            <div class="card p-6">
+                                <h3 class="text-lg font-bold mb-4">Revenue Trend</h3>
+                                <div class="flex items-end gap-2 h-48">
+                                    <div class="flex-1 bg-[var(--accent)] rounded-t opacity-60" style="height: 40%;"></div>
+                                    <div class="flex-1 bg-[var(--accent)] rounded-t opacity-60" style="height: 55%;"></div>
+                                    <div class="flex-1 bg-[var(--accent)] rounded-t opacity-60" style="height: 45%;"></div>
+                                    <div class="flex-1 bg-[var(--accent)] rounded-t opacity-70" style="height: 65%;"></div>
+                                    <div class="flex-1 bg-[var(--accent)] rounded-t opacity-70" style="height: 60%;"></div>
+                                    <div class="flex-1 bg-[var(--accent)] rounded-t opacity-80" style="height: 75%;"></div>
+                                    <div class="flex-1 bg-[var(--accent)] rounded-t opacity-80" style="height: 70%;"></div>
+                                    <div class="flex-1 bg-[var(--accent)] rounded-t opacity-90" style="height: 85%;"></div>
+                                    <div class="flex-1 bg-[var(--accent)] rounded-t opacity-90" style="height: 80%;"></div>
+                                    <div class="flex-1 bg-[var(--accent)] rounded-t" style="height: 95%;"></div>
+                                    <div class="flex-1 bg-[var(--accent)] rounded-t" style="height: 90%;"></div>
+                                    <div class="flex-1 bg-[var(--accent)] rounded-t" style="height: 100%;"></div>
+                                </div>
+                                <div class="flex justify-between text-xs text-[var(--fg-muted)] mt-2">
+                                    <span>Jan</span>
+                                    <span>Mar</span>
+                                    <span>Jun</span>
+                                    <span>Sep</span>
+                                    <span>Dec</span>
+                                </div>
+                            </div>
+                            <div class="card p-6">
+                                <h3 class="text-lg font-bold mb-4">Recent Activity</h3>
+                                <div class="space-y-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-full bg-[var(--accent-glow)] flex items-center justify-center">
+                                            <svg class="w-5 h-5 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+                                            </svg>
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="text-sm font-medium">New member signup</div>
+                                            <div class="text-xs text-[var(--fg-muted)]">John D. joined Strength Builder</div>
+                                        </div>
+                                        <span class="text-xs text-[var(--fg-muted)]">2m ago</span>
+                                    </div>
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center">
+                                            <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                                            </svg>
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="text-sm font-medium">New order</div>
+                                            <div class="text-xs text-[var(--fg-muted)]">Order #4521 - $189.00</div>
+                                        </div>
+                                        <span class="text-xs text-[var(--fg-muted)]">15m ago</span>
+                                    </div>
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center">
+                                            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+                                            </svg>
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="text-sm font-medium">New review</div>
+                                            <div class="text-xs text-[var(--fg-muted)]">5-star on Whey Protein</div>
+                                        </div>
+                                        <span class="text-xs text-[var(--fg-muted)]">1h ago</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Users Section -->
+                    <div id="admin-users" class="admin-section hidden">
+                        <div class="flex items-center justify-between mb-6">
+                            <h2 class="text-2xl font-bold">User Management</h2>
+                            <button class="btn-primary text-sm">Add User</button>
+                        </div>
+                        <div class="card overflow-hidden">
+                            <div class="overflow-x-auto">
+                                <table class="w-full">
+                                    <thead class="bg-[var(--bg-elevated)]">
+                                        <tr>
+                                            <th class="text-left p-4 text-sm font-semibold">User</th>
+                                            <th class="text-left p-4 text-sm font-semibold">Plan</th>
+                                            <th class="text-left p-4 text-sm font-semibold">Status</th>
+                                            <th class="text-left p-4 text-sm font-semibold">Joined</th>
+                                            <th class="text-left p-4 text-sm font-semibold">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="usersTable"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Content Section -->
+                    <div id="admin-content" class="admin-section hidden">
+                        <div class="flex items-center justify-between mb-6">
+                            <h2 class="text-2xl font-bold">Content Management</h2>
+                            <button class="btn-primary text-sm">Create Content</button>
+                        </div>
+                        <div class="grid sm:grid-cols-3 gap-4 mb-6">
+                            <div class="card p-4 cursor-pointer hover:border-[var(--accent)]">
+                                <div class="text-3xl mb-2">🏋️</div>
+                                <div class="font-semibold">Training Programs</div>
+                                <div class="text-sm text-[var(--fg-muted)]">24 programs</div>
+                            </div>
+                            <div class="card p-4 cursor-pointer hover:border-[var(--accent)]">
+                                <div class="text-3xl mb-2">🥗</div>
+                                <div class="font-semibold">Meal Plans</div>
+                                <div class="text-sm text-[var(--fg-muted)]">18 plans</div>
+                            </div>
+                            <div class="card p-4 cursor-pointer hover:border-[var(--accent)]">
+                                <div class="text-3xl mb-2">📝</div>
+                                <div class="font-semibold">Blog Posts</div>
+                                <div class="text-sm text-[var(--fg-muted)]">56 posts</div>
+                            </div>
+                        </div>
+                        <div class="card p-6">
+                            <h3 class="text-lg font-bold mb-4">Recent Content</h3>
+                            <div class="space-y-3" id="contentList"></div>
+                        </div>
+                    </div>
+
+                    <!-- Products Section -->
+                    <div id="admin-products" class="admin-section hidden">
+                        <div class="flex items-center justify-between mb-6">
+                            <h2 class="text-2xl font-bold">Product Management</h2>
+                            <button class="btn-primary text-sm">Add Product</button>
+                        </div>
+                        <div class="card overflow-hidden">
+                            <div class="overflow-x-auto">
+                                <table class="w-full">
+                                    <thead class="bg-[var(--bg-elevated)]">
+                                        <tr>
+                                            <th class="text-left p-4 text-sm font-semibold">Product</th>
+                                            <th class="text-left p-4 text-sm font-semibold">Category</th>
+                                            <th class="text-left p-4 text-sm font-semibold">Price</th>
+                                            <th class="text-left p-4 text-sm font-semibold">Stock</th>
+                                            <th class="text-left p-4 text-sm font-semibold">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="productsTable"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Orders Section -->
+                    <div id="admin-orders" class="admin-section hidden">
+                        <div class="flex items-center justify-between mb-6">
+                            <h2 class="text-2xl font-bold">Order Management</h2>
+                            <div class="flex gap-2">
+                                <select class="input-field text-sm w-40">
+                                    <option>All Status</option>
+                                    <option>Pending</option>
+                                    <option>Processing</option>
+                                    <option>Shipped</option>
+                                    <option>Delivered</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="card overflow-hidden">
+                            <div class="overflow-x-auto">
+                                <table class="w-full">
+                                    <thead class="bg-[var(--bg-elevated)]">
+                                        <tr>
+                                            <th class="text-left p-4 text-sm font-semibold">Order ID</th>
+                                            <th class="text-left p-4 text-sm font-semibold">Customer</th>
+                                            <th class="text-left p-4 text-sm font-semibold">Items</th>
+                                            <th class="text-left p-4 text-sm font-semibold">Total</th>
+                                            <th class="text-left p-4 text-sm font-semibold">Status</th>
+                                            <th class="text-left p-4 text-sm font-semibold">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="ordersTable"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Marketing Section -->
+                    <div id="admin-marketing" class="admin-section hidden">
+                        <h2 class="text-2xl font-bold mb-6">Marketing Tools</h2>
+                        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                            <div class="card p-6">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <div class="w-12 h-12 rounded-lg bg-[var(--accent-glow)] flex items-center justify-center">
+                                        <svg class="w-6 h-6 text-[var(--accent)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <div class="font-semibold">Email Campaigns</div>
+                                        <div class="text-xs text-[var(--fg-muted)]">12 active campaigns</div>
+                                    </div>
+                                </div>
+                                <button class="btn-secondary w-full text-sm">Manage Campaigns</button>
+                            </div>
+                            <div class="card p-6">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <div class="w-12 h-12 rounded-lg bg-orange-500/20 flex items-center justify-center">
+                                        <svg class="w-6 h-6 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <div class="font-semibold">Promotions</div>
+                                        <div class="text-xs text-[var(--fg-muted)]">5 active promos</div>
+                                    </div>
+                                </div>
+                                <button class="btn-secondary w-full text-sm">Create Promotion</button>
+                            </div>
+                            <div class="card p-6">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <div class="w-12 h-12 rounded-lg bg-purple-500/20 flex items-center justify-center">
+                                        <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/>
+                                        </svg>
+                                    </div>
+                                    <div>
+                                        <div class="font-semibold">Discount Codes</div>
+                                        <div class="text-xs text-[var(--fg-muted)]">28 codes active</div>
+                                    </div>
+                                </div>
+                                <button class="btn-secondary w-full text-sm">Manage Codes</button>
+                            </div>
+                        </div>
+
+                        <div class="card p-6">
+                            <h3 class="text-lg font-bold mb-4">Create New Campaign</h3>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm text-[var(--fg-muted)] mb-2">Campaign Name</label>
+                                    <input type="text" class="input-field" placeholder="Summer Sale 2024">
+                                </div>
+                                <div>
+                                    <label class="block text-sm text-[var(--fg-muted)] mb-2">Target Audience</label>
+                                    <select class="input-field">
+                                        <option>All Members</option>
+                                        <option>Active Members</option>
+                                        <option>New Members</option>
+                                        <option>Inactive Members</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm text-[var(--fg-muted)] mb-2">Start Date</label>
+                                    <input type="date" class="input-field">
+                                </div>
+                                <div>
+                                    <label class="block text-sm text-[var(--fg-muted)] mb-2">End Date</label>
+                                    <input type="date" class="input-field">
+                                </div>
+                            </div>
+                            <button class="btn-primary mt-4">Create Campaign</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Data
+        const programs = [
+            { id: 1, name: 'Strength Builder', duration: '12 weeks', level: 'Intermediate', price: 79, color: '#00ff88' },
+            { id: 2, name: 'Fat Burner Pro', duration: '8 weeks', level: 'Beginner', price: 59, color: '#ff6b6b' },
+            { id: 3, name: 'Mass Gainer', duration: '16 weeks', level: 'Advanced', price: 99, color: '#ffa500' },
+            { id: 4, name: 'HIIT Cardio', duration: '6 weeks', level: 'All Levels', price: 49, color: '#00bfff' }
+        ];
+
+        const products = [
+            { id: 1, name: 'Whey Protein Isolate', category: 'supplements', price: 49.99, stock: 234, image: 'https://placehold.co/300x300/1a1a24/00ff88?text=Whey' },
+            { id: 2, name: 'Pre-Workout Formula', category: 'supplements', price: 39.99, stock: 156, image: 'https://placehold.co/300x300/1a1a24/ff6b6b?text=Pre+Workout' },
+            { id: 3, name: 'BCAA Recovery', category: 'supplements', price: 29.99, stock: 89, image: 'https://placehold.co/300x300/1a1a24/ffa500?text=BCAA' },
+            { id: 4, name: 'Performance Tank', category: 'apparel', price: 34.99, stock: 67, image: 'https://placehold.co/300x300/1a1a24/00bfff?text=Tank' },
+            { id: 5, name: 'Training Shorts', category: 'apparel', price: 44.99, stock: 123, image: 'https://placehold.co/300x300/1a1a24/00ff88?text=Shorts' },
+            { id: 6, name: 'Resistance Bands Set', category: 'equipment', price: 24.99, stock: 45, image: 'https://placehold.co/300x300/1a1a24/ff6b6b?text=Bands' },
+            { id: 7, name: 'Adjustable Dumbbells', category: 'equipment', price: 299.99, stock: 12, image: 'https://placehold.co/300x300/1a1a24/ffa500?text=Dumbbells' },
+            { id: 8, name: 'Foam Roller', category: 'equipment', price: 19.99, stock: 78, image: 'https://placehold.co/300x300/1a1a24/00bfff?text=Roller' }
+        ];
+
+        const transformations = [
+            { id: 1, name: 'Mike R.', duration: '12 weeks', lost: '25 lbs', image: 'https://placehold.co/400x500/1a1a24/00ff88?text=Mike' },
+            { id: 2, name: 'Sarah K.', duration: '16 weeks', lost: '32 lbs', image: 'https://placehold.co/400x500/1a1a24/ff6b6b?text=Sarah' },
+            { id: 3, name: 'James T.', duration: '8 weeks', lost: '18 lbs', image: 'https://placehold.co/400x500/1a1a24/ffa500?text=James' },
+            { id: 4, name: 'Emily W.', duration: '20 weeks', lost: '40 lbs', image: 'https://placehold.co/400x500/1a1a24/00bfff?text=Emily' },
+            { id: 5, name: 'David L.', duration: '10 weeks', lost: '22 lbs', image: 'https://placehold.co/400x500/1a1a24/00ff88?text=David' },
+            { id: 6, name: 'Lisa M.', duration: '14 weeks', lost: '28 lbs', image: 'https://placehold.co/400x500/1a1a24/ff6b6b?text=Lisa' }
+        ];
+
+        const blogPosts = [
+            { id: 1, title: '10 Tips for Maximizing Your Gains', category: 'Training', date: 'Dec 15, 2024', readTime: '5 min' },
+            { id: 2, title: 'The Ultimate Guide to Meal Prep', category: 'Nutrition', date: 'Dec 12, 2024', readTime: '8 min' },
+            { id: 3, title: 'Recovery: Why Rest Days Matter', category: 'Recovery', date: 'Dec 10, 2024', readTime: '4 min' },
+            { id: 4, title: 'Building Mental Toughness', category: 'Mindset', date: 'Dec 8, 2024', readTime: '6 min' },
+            { id: 5, title: 'Supplements 101: What You Need', category: 'Supplements', date: 'Dec 5, 2024', readTime: '7 min' },
+            { id: 6, title: 'Home Workout Essentials', category: 'Training', date: 'Dec 3, 2024', readTime: '5 min' }
+        ];
+
+        const users = [
+            { id: 1, name: 'Alex Johnson', email: 'alex@email.com', plan: 'Premium', status: 'active', joined: '2024-01-15' },
+            { id: 2, name: 'Maria Garcia', email: 'maria@email.com', plan: 'Basic', status: 'active', joined: '2024-02-20' },
+            { id: 3, name: 'John Smith', email: 'john@email.com', plan: 'Premium', status: 'paused', joined: '2024-03-10' },
+            { id: 4, name: 'Emma Wilson', email: 'emma@email.com', plan: 'Basic', status: 'active', joined: '2024-04-05' },
+            { id: 5, name: 'Michael Brown', email: 'michael@email.com', plan: 'Premium', status: 'cancelled', joined: '2024-01-28' }
+        ];
+
+        const orders = [
+            { id: '#4521', customer: 'Alex Johnson', items: 3, total: 189.97, status: 'delivered' },
+            { id: '#4520', customer: 'Maria Garcia', items: 1, total: 49.99, status: 'shipped' },
+            { id: '#4519', customer: 'John Smith', items: 2, total: 79.98, status: 'processing' },
+            { id: '#4518', customer: 'Emma Wilson', items: 4, total: 234.96, status: 'pending' },
+            { id: '#4517', customer: 'Michael Brown', items: 1, total: 299.99, status: 'delivered' }
+        ];
+
+        const workouts = [
+            { day: 'Monday', name: 'Upper Body Power', exercises: 6, duration: '60 min', completed: true },
+            { day: 'Tuesday', name: 'Lower Body Strength', exercises: 5, duration: '55 min', completed: true },
+            { day: 'Wednesday', name: 'Active Recovery', exercises: 3, duration: '30 min', completed: true },
+            { day: 'Thursday', name: 'Push Focus', exercises: 5, duration: '50 min', completed: false },
+            { day: 'Friday', name: 'Pull Focus', exercises: 5, duration: '50 min', completed: false }
+        ];
+
+        const meals = [
+            { time: '7:00 AM', name: 'Breakfast', food: 'Oatmeal with berries and protein shake', calories: 520 },
+            { time: '10:00 AM', name: 'Snack', food: 'Greek yogurt with almonds', calories: 280 },
+            { time: '1:00 PM', name: 'Lunch', food: 'Grilled chicken salad with quinoa', calories: 580 },
+            { time: '4:00 PM', name: 'Pre-Workout', food: 'Banana with peanut butter', calories: 240 },
+            { time: '7:00 PM', name: 'Dinner', food: 'Salmon with vegetables and rice', calories: 620 }
+        ];
+
+        // Navigation
+        function navigateTo(page) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+            
+            const targetPage = document.getElementById(`page-${page}`);
+            if (targetPage) {
+                targetPage.classList.add('active');
+            }
+            
+            const navLink = document.querySelector(`.nav-link[data-page="${page}"]`);
+            if (navLink) {
+                navLink.classList.add('active');
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('hidden');
+        }
+
+        // Portal Tabs
+        function switchPortalTab(tab) {
+            document.querySelectorAll('.portal-tab').forEach(t => t.classList.add('hidden'));
+            document.querySelectorAll('#page-portal .tab-btn').forEach(b => b.classList.remove('active'));
+            
+            const targetTab = document.getElementById(`portal-${tab}`);
+            if (targetTab) {
+                targetTab.classList.remove('hidden');
+            }
+            
+            event.target.classList.add('active');
+        }
+
+        // Admin Sections
+        function switchAdminSection(section) {
+            document.querySelectorAll('.admin-section').forEach(s => s.classList.add('hidden'));
+            document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+            
+            const targetSection = document.getElementById(`admin-${section}`);
+            if (targetSection) {
+                targetSection.classList.remove('hidden');
+            }
+            
+            event.currentTarget.classList.add('active');
+        }
+
+        // Shop Categories
+        document.querySelectorAll('.shop-cat-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.shop-cat-btn').forEach(b => {
+                    b.classList.remove('bg-[var(--accent)]', 'text-[var(--bg)]');
+                    b.classList.add('bg-[var(--bg-card)]');
+                });
+                this.classList.remove('bg-[var(--bg-card)]');
+                this.classList.add('bg-[var(--accent)]', 'text-[var(--bg)]');
+                
+                renderProducts(this.dataset.category);
+            });
+        });
+
+        // Render Functions
+        function renderPrograms() {
+            const container = document.getElementById('featuredPrograms');
+            if (!container) return;
+            
+            container.innerHTML = programs.map(program => `
+                <div class="card p-6 cursor-pointer group">
+                    <div class="h-32 rounded-lg mb-4 flex items-center justify-center" style="background: linear-gradient(135deg, ${program.color}22, transparent);">
+                        <svg class="w-12 h-12" style="color: ${program.color};" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-bold text-lg mb-1">${program.name}</h3>
+                    <p class="text-sm text-[var(--fg-muted)] mb-3">${program.duration} • ${program.level}</p>
+                    <div class="flex items-center justify-between">
+                        <span class="text-xl font-bold" style="color: ${program.color};">$${program.price}</span>
+                        <button class="btn-secondary text-xs px-3 py-2 opacity-0 group-hover:opacity-100 transition-opacity">View</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderProducts(category = 'all') {
+            const container = document.getElementById('productsGrid');
+            if (!container) return;
+            
+            const filtered = category === 'all' ? products : products.filter(p => p.category === category);
+            
+            container.innerHTML = filtered.map(product => `
+                <div class="product-card card overflow-hidden group">
+                    <div class="h-48 bg-[var(--bg-elevated)] overflow-hidden">
+                        <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover">
+                    </div>
+                    <div class="p-4">
+                        <div class="text-xs text-[var(--fg-muted)] uppercase mb-1">${product.category}</div>
+                        <h3 class="font-semibold mb-2">${product.name}</h3>
+                        <div class="flex items-center justify-between">
+                            <span class="text-lg font-bold text-[var(--accent)]">$${product.price.toFixed(2)}</span>
+                            <button class="btn-primary text-xs px-3 py-2">Add to Cart</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderTransformations() {
+            const container = document.getElementById('transformationsGrid');
+            if (!container) return;
+            
+            container.innerHTML = transformations.map(t => `
+                <div class="card overflow-hidden group cursor-pointer">
+                    <div class="h-64 bg-[var(--bg-elevated)] overflow-hidden">
+                        <img src="${t.image}" alt="${t.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-bold text-lg">${t.name}</h3>
+                        <p class="text-sm text-[var(--fg-muted)]">${t.duration} transformation</p>
+                        <div class="mt-2 text-[var(--accent)] font-semibold">Lost ${t.lost}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderBlog() {
+            const container = document.getElementById('blogGrid');
+            if (!container) return;
+            
+            const categoryColors = {
+                'Training': '#00ff88',
+                'Nutrition': '#ff6b6b',
+                'Recovery': '#00bfff',
+                'Mindset': '#ffa500',
+                'Supplements': '#a855f7'
+            };
+            
+            container.innerHTML = blogPosts.map(post => `
+                <div class="card p-6 cursor-pointer group">
+                    <div class="text-xs font-semibold uppercase mb-3" style="color: ${categoryColors[post.category] || 'var(--accent)'};">${post.category}</div>
+                    <h3 class="font-bold text-xl mb-3 group-hover:text-[var(--accent)] transition-colors">${post.title}</h3>
+                    <div class="flex items-center gap-4 text-sm text-[var(--fg-muted)]">
+                        <span>${post.date}</span>
+                        <span>•</span>
+                        <span>${post.readTime} read</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderUsersTable() {
+            const container = document.getElementById('usersTable');
+            if (!container) return;
+            
+            container.innerHTML = users.map(user => `
+                <tr class="border-t border-[var(--border)]">
+                    <td class="p-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-[var(--accent)] flex items-center justify-center text-[var(--bg)] font-bold">${user.name.charAt(0)}</div>
+                            <div>
+                                <div class="font-medium">${user.name}</div>
+                                <div class="text-xs text-[var(--fg-muted)]">${user.email}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td class="p-4">${user.plan}</td>
+                    <td class="p-4">
+                        <span class="badge ${user.status === 'active' ? 'badge-success' : user.status === 'paused' ? 'badge-warning' : 'badge-danger'}">${user.status}</span>
+                    </td>
+                    <td class="p-4 text-[var(--fg-muted)]">${user.joined}</td>
+                    <td class="p-4">
+                        <button class="text-[var(--accent)] hover:underline text-sm">Edit</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderProductsTable() {
+            const container = document.getElementById('productsTable');
+            if (!container) return;
+            
+            container.innerHTML = products.slice(0, 5).map(product => `
+                <tr class="border-t border-[var(--border)]">
+                    <td class="p-4">
+                        <div class="flex items-center gap-3">
+                            <img src="${product.image}" alt="${product.name}" class="w-10 h-10 rounded object-cover">
+                            <span class="font-medium">${product.name}</span>
+                        </div>
+                    </td>
+                    <td class="p-4 capitalize">${product.category}</td>
+                    <td class="p-4 font-semibold">$${product.price.toFixed(2)}</td>
+                    <td class="p-4">
+                        <span class="${product.stock < 20 ? 'text-[var(--danger)]' : 'text-[var(--fg)]'}">${product.stock} units</span>
+                    </td>
+                    <td class="p-4">
+                        <button class="text-[var(--accent)] hover:underline text-sm">Edit</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderOrdersTable() {
+            const container = document.getElementById('ordersTable');
+            if (!container) return;
+            
+            const statusClasses = {
+                'pending': 'badge-warning',
+                'processing': 'badge-warning',
+                'shipped': 'badge-success',
+                'delivered': 'badge-success'
+            };
+            
+            container.innerHTML = orders.map(order => `
+                <tr class="border-t border-[var(--border)]">
+                    <td class="p-4 font-mono">${order.id}</td>
+                    <td class="p-4">${order.customer}</td>
+                    <td class="p-4">${order.items} items</td>
+                    <td class="p-4 font-semibold">$${order.total.toFixed(2)}</td>
+                    <td class="p-4">
+                        <span class="badge ${statusClasses[order.status]}">${order.status}</span>
+                    </td>
+                    <td class="p-4">
+                        <button class="text-[var(--accent)] hover:underline text-sm">View</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function renderWorkouts() {
+            const container = document.getElementById('workoutList');
+            if (!container) return;
+            
+            container.innerHTML = workouts.map(workout => `
+                <div class="card p-4 flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-lg ${workout.completed ? 'bg-[var(--accent)]' : 'bg-[var(--border)]'} flex items-center justify-center">
+                        ${workout.completed ? `
+                            <svg class="w-6 h-6 text-[var(--bg)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                        ` : `
+                            <svg class="w-6 h-6 text-[var(--fg-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        `}
+                    </div>
+                    <div class="flex-1">
+                        <div class="text-sm text-[var(--fg-muted)]">${workout.day}</div>
+                        <div class="font-semibold">${workout.name}</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="text-sm">${workout.exercises} exercises</div>
+                        <div class="text-sm text-[var(--fg-muted)]">${workout.duration}</div>
+                    </div>
+                    <button class="btn-secondary text-sm px-4 py-2">${workout.completed ? 'Review' : 'Start'}</button>
+                </div>
+            `).join('');
+        }
+
+        function renderMeals() {
+            const container = document.getElementById('mealList');
+            if (!container) return;
+            
+            container.innerHTML = meals.map(meal => `
+                <div class="flex items-center gap-4 p-3 bg-[var(--bg-elevated)] rounded-lg">
+                    <div class="text-sm text-[var(--fg-muted)] w-20">${meal.time}</div>
+                    <div class="flex-1">
+                        <div class="font-medium">${meal.name}</div>
+                        <div class="text-xs text-[var(--fg-muted)]">${meal.food}</div>
+                    </div>
+                    <div class="text-sm font-semibold">${meal.calories} cal</div>
+                </div>
+            `).join('');
+        }
+
+        function renderContentList() {
+            const container = document.getElementById('contentList');
+            if (!container) return;
+            
+            const contentItems = [
+                { type: 'Training Program', name: 'Strength Builder 2.0', status: 'Published', date: 'Dec 15, 2024' },
+                { type: 'Meal Plan', name: 'Keto Meal Plan', status: 'Draft', date: 'Dec 14, 2024' },
+                { type: 'Blog Post', name: 'Winter Training Tips', status: 'Published', date: 'Dec 12, 2024' }
+            ];
+            
+            container.innerHTML = contentItems.map(item => `
+                <div class="flex items-center gap-4 p-3 bg-[var(--bg-elevated)] rounded-lg">
+                    <div class="flex-1">
+                        <div class="font-medium">${item.name}</div>
+                        <div class="text-xs text-[var(--fg-muted)]">${item.type}</div>
+                    </div>
+                    <span class="badge ${item.status === 'Published' ? 'badge-success' : 'badge-warning'}">${item.status}</span>
+                    <span class="text-sm text-[var(--fg-muted)]">${item.date}</span>
+                </div>
+            `).join('');
+        }
+
+        // Initialize
+        function init() {
+            renderPrograms();
+            renderProducts();
+            renderTransformations();
+            renderBlog();
+            renderUsersTable();
+            renderProductsTable();
+            renderOrdersTable();
+            renderWorkouts();
+            renderMeals();
+            renderContentList();
+
+            // Trigger animations
+            document.querySelectorAll('.animate-slide-up').forEach(el => {
+                el.style.opacity = '0';
+                setTimeout(() => {
+                    el.style.opacity = '';
+                }, 100);
+            });
+        }
+
+        // Scroll animations with IntersectionObserver
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Start app
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
